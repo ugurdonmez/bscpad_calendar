@@ -1,8 +1,72 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import { hasEthereum } from '../utils/ethereum'
+import { useEffect, useState, useRef } from 'react'
+import { ethers } from 'ethers'
+import useSwr from 'swr'
+
+const fetcher = (url) => fetch(url).then((res) => res.json())
 
 export default function Home() {
+
+  const [connectedWalletAddress, setConnectedWalletAddressState] = useState('')
+  const { data, error } = useSwr('/api/hello', fetcher)
+
+  useEffect( () => {
+    if(! hasEthereum()) {
+      setConnectedWalletAddressState(`MetaMask unavailable`)
+      return
+    }
+    async function setConnectedWalletAddress() {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner()
+      try {
+        const signerAddress = await signer.getAddress()
+        setConnectedWalletAddressState(`Connected wallet: ${signerAddress}`)
+      } catch {
+        setConnectedWalletAddressState('No wallet connected')
+        return;
+      }
+    }
+    setConnectedWalletAddress();
+  }, [])
+
+  if (error) return <div>Failed to load users</div>
+  if (!data) return <div>Loading...</div>
+
+  console.log('working')
+  console.log(data)
+
+  async function requestAccount() {
+    await window.ethereum.request({ method: 'eth_requestAccounts' } )
+  }
+
+  function logout () {
+    setConnectedWalletAddressState('No wallet connected')
+  }
+
+  async function clickTest() {
+    console.log('clicked')
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner()
+    await requestAccount()
+    const signerAddress = await signer.getAddress()
+    setConnectedWalletAddressState(`Connected wallet: ${signerAddress}`)
+
+  }
+
+  async function claim() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract('0xa1de2592f04b5829f7e23e18dd35e91d13be8b5c', ['function claim(uint256 id)'], signer)
+
+    const transaction = await contract.claim(5)
+    await transaction.wait()
+
+    console.log(transaction)
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -11,44 +75,25 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <div>
+        {data.name}
+      </div>
+
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          BSCPad Projects
         </h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+          <button onClick={clickTest}>test</button>
+          <button onClick={logout}>logout</button>
+          <button onClick={claim}>claim</button>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+          <div className="h-4">
+            { connectedWalletAddress && <p className="text-md">{connectedWalletAddress}</p> }
+          </div>
 
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
         </div>
       </main>
 
