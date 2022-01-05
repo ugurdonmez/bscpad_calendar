@@ -53,7 +53,6 @@ export default function Home() {
     await requestAccount()
     const signerAddress = await signer.getAddress()
     setConnectedWalletAddressState(`Connected wallet: ${signerAddress}`)
-
   }
 
   async function claim() {
