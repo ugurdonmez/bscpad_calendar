@@ -7,6 +7,14 @@ import { ethers } from 'ethers'
 import { Container, Row, Col, Modal, Text, Button, Grid } from '@nextui-org/react'
 import Head from 'next/head'
 
+moment.locale('ko', {
+  week: {
+    dow: 1,
+    doy: 1,
+  },
+});
+
+
 const localizer = momentLocalizer(moment)
 
 export default function CalendarPage() {
