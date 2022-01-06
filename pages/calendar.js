@@ -4,7 +4,7 @@ import useSwr from 'swr'
 import { hasEthereum } from '../utils/ethereum'
 import { useEffect, useState, useRef } from 'react'
 import { ethers } from 'ethers'
-import { Container, Row, Col, Modal, Text, Button, Grid } from '@nextui-org/react'
+import { Container, Row, Col, Modal, Text, Button, Grid, Spacer } from '@nextui-org/react'
 import Head from 'next/head'
 
 moment.locale('ko', {
@@ -13,7 +13,6 @@ moment.locale('ko', {
     doy: 1,
   },
 });
-
 
 const localizer = momentLocalizer(moment)
 
@@ -136,6 +135,8 @@ export default function CalendarPage() {
         </Modal.Body>
       </Modal>
 
+      <Spacer y={2}/>
+
       <Grid.Container gap={2}>
         <Grid xs={6}>
           <Text
@@ -166,13 +167,15 @@ export default function CalendarPage() {
         </Grid>
       </Grid.Container>
 
+      <Spacer y={4}/>
+
       <div>
         <Calendar
           events={events}
           step={60}
           showMultiDayTimes
           onSelectEvent={(event) => handleSelectEvent(event)}
-          style={{ height: 500 }}
+          style={{ height: 750 }}
           localizer={localizer}
         />
       </div>
