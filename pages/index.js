@@ -1,12 +1,8 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
 import { hasEthereum } from '../utils/ethereum'
 import { useEffect, useState, useRef } from 'react'
 import { ethers } from 'ethers'
 import useSwr from 'swr'
 import Router from 'next/router'
-
 
 const fetcher = (url) => fetch(url).then((res) => res.json())
 
@@ -16,8 +12,6 @@ export default function Home() {
   const { data, error } = useSwr('/api/hello', fetcher)
 
   useEffect( () => {
-
-
     const {pathname} = Router
     if(pathname == '/' ){
       Router.push('/calendar')

@@ -13,7 +13,7 @@ export default function handler(req, res) {
     },
     {
       "title": "Atlantis Metaverse",
-      "address": "0xe428127cc2055e5c9d756ddce356aa2bf8da379b",
+      "address": "0x542713a2cae193ffa79615bcebd0a9728d3e1429",
       "network": "bsc",
       "claims" : [
         "22-01-08 15:00",
